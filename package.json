@@ -1,0 +1,16 @@
+{
+  "name": "natorus",
+  "version": "1.0.0",
+  "description": "learning stuff",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "author": "Adityaaa",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.22.2",
+    "morgan": "^1.11.0"
+  }
+}
