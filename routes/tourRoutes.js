@@ -11,6 +11,6 @@ router
   .patch(tourController.patchTour)
   .delete(tourController.deleteTour)
   .get(tourController.getTour);
-router.route('/').post(tourController.postTour).get(tourController.getAllTour);
+router.route('/').post(tourController.checkBody,tourController.postTour).get(tourController.getAllTour);
 
 module.exports = router;
