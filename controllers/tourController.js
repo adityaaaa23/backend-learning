@@ -56,19 +56,24 @@ exports.getTour = async (req, res) => {
   }
 };
 
-exports.patchTour = (req, res) => {
-  // if (req.params.id > tours.length) {
-  //   res.status(404).json({
-  //     status: 'not found',
-  //     messgae: 'areee',
-  //   });
-  // }
-  res.status(200).json({
-    status: 'sucess',
-    data: {
-      tour: 'updataed babyyy',
-    },
-  });
+exports.patchTour = async (req, res) => {
+  try {
+    const newTour = await tour.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    res.status(200).json({
+      status: 'sucess',
+      data: {
+        newTour,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'failed',
+      message: err,
+    });
+  }
 };
 
 exports.deleteTour = (req, res) => {
