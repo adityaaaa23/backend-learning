@@ -1,16 +1,20 @@
 const express = require('express');
 
-const tourController = require('../controllers/tourController')
+const tourController = require('../controllers/tourController');
 
 const router = express.Router();
 
-router.param('id',tourController.checkID);
+// console.log(tourController);
+// console.log('postTour =', tourController.postTour);
+// router.param('id',tourController.checkID);
+
+//Remove check body as mongoose will do it on its own...
 
 router
   .route('/:id')
   .patch(tourController.patchTour)
   .delete(tourController.deleteTour)
   .get(tourController.getTour);
-router.route('/').post(tourController.checkBody,tourController.postTour).get(tourController.getAllTour);
+router.route('/').post(tourController.postTour).get(tourController.getAllTour);
 
 module.exports = router;
