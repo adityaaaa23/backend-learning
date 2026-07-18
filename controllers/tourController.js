@@ -4,6 +4,7 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 
 const Tour = require('./../models/tourModel');
+const tour = require('./../models/tourModel');
 //Tanking data form
 // const tours = JSON.parse(
 //   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`),
@@ -22,23 +23,37 @@ exports.checkID = (req, res, next, val) => {
   next();
 };
 
-exports.getAllTour = (req, res) => {
-  // const tour = tours;
-  // return res.status(200).json({
-  //   status: 'sucess',
-  //   tour,
-  // });
+exports.getAllTour = async (req, res) => {
+  try {
+    const tours = await Tour.find();
+    res.status(200).json({
+      status: 'sucess',
+      retults: tours.length,
+      data: {
+        tours,
+      },
+    });
+  } catch (err) {
+    res.status(200).json({
+      status: 'failed',
+    });
+  }
 };
 
-exports.getTour = (req, res) => {
-  console.log(req.params);
-  const id = req.params.id * 1;
-  // const tour = tours.find((el) => el.id === id);
-  // res.status(200).json({
-  //   status: 'sucess',
-  //   time: req.requestTime,
-  //   tours: tour,
-  // });
+exports.getTour = async (req, res) => {
+  try {
+    const tours = await tour.findById(req.params.id);
+    res.status(200).json({
+      status: 'sucessfull',
+      data: {
+        tours,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'unsucessFull',
+    });
+  }
 };
 
 exports.patchTour = (req, res) => {
