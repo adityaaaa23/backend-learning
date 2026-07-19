@@ -4,31 +4,32 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 
 const Tour = require('./../models/tourModel');
-const tour = require('./../models/tourModel');
-//Tanking data form
-// const tours = JSON.parse(
-//   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`),
-// );
 
-exports.checkID = (req, res, next, val) => {
-  console.log(`the id id ${val}`);
-  const id = req.params.id * 1;
-  // if (id > tours.length) {
-  //   return res.status(404).json({
-  //     status: 'fail',
-
-  //     message: 'chore bawalaa ho rhe hii kei',
-  //   });
-  // }
-  next();
-};
+{
+  // exports.checkID = (req, res, next, val) => {
+  //   console.log(`the id id ${val}`);
+  //   const id = req.params.id * 1;
+  //   // if (id > tours.length) {
+  //   //   return res.status(404).json({
+  //   //     status: 'fail',
+  //   //     message: 'chore bawalaa ho rhe hii kei',
+  //   //   });
+  //   // }
+  //   next();
+  // };
+} //ye sbb mongoose khud hi krr lega
 
 exports.getAllTour = async (req, res) => {
   try {
-    const tours = await Tour.find();
+    console.log(req.query);
+    // const tours = await Tour.find({
+    //   // duration: 5,   hard coded the queery
+    //   // difficulty: 'easy',
+    // });
+    const tours = await Tour.find(req.query); // takign the query
     res.status(200).json({
       status: 'sucess',
-      retults: tours.length,
+      reults: tours.length,
       data: {
         tours,
       },
@@ -42,7 +43,7 @@ exports.getAllTour = async (req, res) => {
 
 exports.getTour = async (req, res) => {
   try {
-    const tours = await tour.findById(req.params.id);
+    const tours = await Tour.findById(req.params.id);
     res.status(200).json({
       status: 'sucessfull',
       data: {
