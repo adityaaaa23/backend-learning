@@ -9,6 +9,9 @@ const router = express.Router();
 // router.param('id',tourController.checkID);
 
 //Remove check body as mongoose will do it on its own...
+router
+  .route('/top-5-cheap')
+  .get(tourController.alias, tourController.getAllTour);
 
 router
   .route('/:id')

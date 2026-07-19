@@ -18,25 +18,104 @@ const Tour = require('./../models/tourModel');
   //   next();
   // };
 } //ye sbb mongoose khud hi krr lega
-
+exports.alias = (req, res, next) => {
+  ((req.query.limit = '5'),
+    (req.query.sort = '-price'),
+    (req.query.fields = 'name,price,ratingAverage'));
+  next();
+};
 exports.getAllTour = async (req, res) => {
   try {
     console.log(req.query);
-    // const tours = await Tour.find({
-    //   // duration: 5,   hard coded the queery
-    //   // difficulty: 'easy',
-    // });
+    //filtering
+
     const queryObj = { ...req.query };
-
-    const excludeObj = ['page', 'sort', 'limit', 'feilds'];
-
+    const excludeObj = ['page', 'sort', 'limit', 'fields'];
     excludeObj.forEach((ele) => delete queryObj[ele]);
 
     console.log(excludeObj);
     console.log(queryObj);
+    // Advanced Filtering
+    // {difficulty: 'eazy' , duration: {$gte:5}}
+    // {difficulty: 'eazy' , duration: { gte:5}}
+    // Postman sends queries like:
+    // ?duration[gte]=5&price[lt]=1000
+    //
+    // Express converts them into:
+    // {
+    //   duration: { gte: '5' },
+    //   price: { lt: '1000' }
+    // }
+    //
+    // But MongoDB only understands operators prefixed with '$':
+    // {
+    //   duration: { $gte: '5' },
+    //   price: { $lt: '1000' }
+    // }
+    //
+    // So:
+    // 1. Convert the query object into a string using JSON.stringify().
+    // 2. Replace gte, gt, lte, lt with $gte, $gt, $lte, $lt using regex.
+    // 3. Convert the string back into an object using JSON.parse().
+    // 4. Pass the parsed object to Tour.find() so MongoDB can execute the comparison operators.
 
-    const query = Tour.find(queryObj); //building the query
+    let queryStr = JSON.stringify(queryObj);
+
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    console.log(JSON.parse(queryStr));
+
+    //Sorting
+
+    let query = Tour.find(JSON.parse(queryStr)); //building the query
+
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(',').join(' ');
+      query = query.sort(sortBy);
+    } else {
+      query = query.sort('-createdAt');
+    }
+
+    //feildSelction
+    if (req.query.fields) {
+      const fields = req.query.fields.split(',').join(' ');
+      query = query.select(fields);
+    } else {
+      query = query.select('-__v');
+    }
+
+    //pagination page=3&limit=10
+    // ! PAGINATION
+    //
+    // URL:
+    // ?page=3&limit=10
+    //
+    // Express receives:
+    // page = "3"
+    // limit = "10"
+    //
+    // Convert them to numbers:
+    //
+    // page = req.query.page * 1 || 1;
+    // limit = req.query.limit * 1 || 100;
+    //
+    // Calculate how many documents to skip:
+    //
+    // skip = (page - 1) * limit;
+    //
+    // Page 1 -> skip 0
+    // Page 2 -> skip 10
+    // Page 3 -> skip 20
+    //
+    // skip() ignores the first 'skip' documents.
+    // limit() returns only 'limit' documents.
+
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 100;
+    const skip = (page - 1) * limit;
+    query = query.skip(skip).limit(limit);
+
     const tours = await query; // executing the query
+
     res.status(200).json({
       //sending  the response
       status: 'sucess',
@@ -46,7 +125,7 @@ exports.getAllTour = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(200).json({
+    res.status(400).json({
       status: 'failed',
     });
   }
