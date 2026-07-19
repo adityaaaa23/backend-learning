@@ -26,8 +26,19 @@ exports.getAllTour = async (req, res) => {
     //   // duration: 5,   hard coded the queery
     //   // difficulty: 'easy',
     // });
-    const tours = await Tour.find(req.query); // takign the query
+    const queryObj = { ...req.query };
+
+    const excludeObj = ['page', 'sort', 'limit', 'feilds'];
+
+    excludeObj.forEach((ele) => delete queryObj[ele]);
+
+    console.log(excludeObj);
+    console.log(queryObj);
+
+    const query = Tour.find(queryObj); //building the query
+    const tours = await query; // executing the query
     res.status(200).json({
+      //sending  the response
       status: 'sucess',
       reults: tours.length,
       data: {
