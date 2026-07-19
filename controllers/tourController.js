@@ -76,17 +76,21 @@ exports.patchTour = async (req, res) => {
   }
 };
 
-exports.deleteTour = (req, res) => {
-  // if (req.params.id > tours.length) {
-  //   res.status(404).json({
-  //     status: 'notfound',
-  //     message: 'sahi se dalo bade bhaiij',
-  //   });
-  // }
-  res.status(204).json({
-    status: 'deleted',
-    data: null,
-  });
+exports.deleteTour = async (req, res) => {
+  try {
+    const newTour = await Tour.findByIdAndDelete(req.params.id);
+    res.status(200).json({
+      status: 'sucessfull',
+      data: null,
+      message: 'deleted',
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'failed',
+      message: 'aya hoga kuch error',
+      error: err,
+    });
+  }
 };
 
 exports.postTour = async (req, res) => {
