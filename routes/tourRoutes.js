@@ -13,6 +13,7 @@ router
   .route('/top-5-cheap')
   .get(tourController.alias, tourController.getAllTour);
 
+router.route('/tour-stats').get(tourController.getTourStats);
 router
   .route('/:id')
   .patch(tourController.patchTour)

@@ -127,3 +127,46 @@ exports.postTour = async (req, res) => {
     });
   }
 };
+exports.getTourStats = async (req, res) => {
+  try {
+    const stats = await Tour.aggregate([
+      {
+        $match: { ratingAverage: { $gte: 3.0 } },
+      },
+      {
+        $group: {
+          _id: '$difficulty',
+          numTours: { $sum: 1 },
+          numRatings: { $sum: '$ratingQuantity' },
+          avgRatings: { $avg: '$ratingAverage' },
+          avgPrice: { $avg: '$price' },
+          minPrice: { $min: '$price' },
+          maxPrice: { $max: '$price' },
+        },
+      },
+      {
+        $sort: { avgPrice: 1 },
+      },
+    ]);
+    res.status(200).json({
+      status: 'all well',
+      stat: {
+        stats,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'unscessfull',
+      message: err,
+    });
+  }
+};
+exports.getMonthlyPlan = async (req, res) => {
+  try {
+  } catch (err) {
+    res.status(400).json({
+      result: 'faliure',
+      message: err,
+    });
+  }
+};
