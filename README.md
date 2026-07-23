@@ -250,6 +250,12 @@ If you found this project interesting or helpful, feel free to **star the reposi
 
 ---
 
+## Note
+
+This is more of a learnig/course driven project hence I wont be adding the frontend part as its based on pug and using that dont make a lot of sense.
+Thankyou for uderstanding 
+
+
 ## 📜 License
 
  dont **copy** it (optional) :)
