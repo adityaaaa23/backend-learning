@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const slugify = require('slugify');
 const tourSchema = new mongoose.Schema(
   {
     name: {
@@ -7,6 +7,7 @@ const tourSchema = new mongoose.Schema(
       required: [true, 'A tour must have a name'],
       unique: true,
     },
+    slug: String,
     duration: {
       type: Number,
       required: [true, 'we should know the duration of thr trip'],
@@ -63,6 +64,15 @@ tourSchema.virtual('durationWeeks').get(function () {
   //these are virtual proerties which can be derived from other properties rather than expilcity storing them bhut sense nai banata  prr inko queries me use nai krr skte
   return this.duration / 7;
 });
+//document middle ware runs before create cmnd and save smd
+// tourSchema.pre('save', function (next) {
+//   this.slug = slugify(this.name, { lower: true });
+//   next();
+// });
+// tourSchema.post('save', function (doc, next) {
+//   console.log(doc);
+//   next();
+// });
 
 const tour = mongoose.model('Tour', tourSchema);
 
